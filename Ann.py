@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
 import sklearn
@@ -95,13 +94,41 @@ y_test=rshape(np.array(y_test))
 
 
 
-from sklearn.svm import SVR
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn import metrics
+#%%
+#X_train, X_test, y_train, y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+'''
+from keras.models import Sequential
+from keras.layers import Dense,Dropout
+from keras.callbacks import ModelCheckpoint,EarlyStopping
+from keras import optimizers
+import tensorflow as tf
 
-clf = SVR(kernel='rbf', degree=3, gamma='scale', coef0=0.0, tol=0.001, C=1.0, epsilon=0.1, shrinking=True, cache_size=200, verbose=2, max_iter=500).fit(X_train, y_train)
-p = clf.predict(X_test)
-s = clf.score(X_test, y_test)
-print("MAPE",np.mean(np.abs((y_test - p) / y_test)) * 100)
-print("RMSE",np.sqrt(metrics.mean_squared_error(y_test, p)))
+model = Sequential()
+model.add(Dense(8,activation='relu',kernel_initializer='normal',input_dim=8))
+model.add(Dense(4,activation='relu',kernel_initializer='normal'))
+model.add(Dense(1,activation='linear',kernel_initializer='normal'))
+model.summary()
+
+#Adagrad = optimizers.Adagrad(lr=0.05, decay=0.0)
+#sgd = optimizers.SGD(lr=0.001, decay=1e-6, momentum=0.8, nesterov=True)
+adam = optimizers.adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+model.compile(optimizer= 'adam' , loss='mean_squared_error' , metrics=['mae'])
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir='logs',profile_batch=1)
+checkpoint = ModelCheckpoint('last.h5', verbose=2, monitor='loss',save_best_only=True, mode='auto')
+early_stopping = EarlyStopping(monitor='val_loss', mode = "min",patience=50,restore_best_weights=True)
+model.fit(X_train,y_train,batch_size=320,validation_data=(X_test,y_test),epochs=3000,verbose=2,callbacks=[tensorboard_callback,checkpoint,early_stopping])
+pred = (model.predict(X_test),y_test)
+s=model.predict_on_batch(X_test)
+print("RMSE",np.mean(np.abs((y_test - pred) / y_test)) * 100)
+print("MAPE",np.sqrt(metrics.mean_squared_error(y_test, pred)))
+'''
+from sklearn.neural_network import MLPClassifier
+import matplotlib.pyplot as plt
+
+clf = MLPClassifier(hidden_layer_sizes=16,activation="relu",early_stopping=True,random_state=32, max_iter=500,verbose=2).fit(X_train, y_train)
+pa=clf.predict_proba(X_test[:1])
+p=clf.predict(X_test)
+s=clf.score(X_test, y_test)
+print("RMSE",np.mean(np.abs((y_test - p) / y_test)) * 100)
+print("MAPE",np.sqrt(metrics.mean_squared_error(y_test, p)))
+

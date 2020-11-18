@@ -48,18 +48,22 @@ def str_transform(df):
     df['sulphates'] = df['sulphates']
     df['alcohol'] = df['alcohol']
     df['quality'] = df['quality']
-    corrdf=df.corr()
-    print(corrdf['quality'].sort_values(ascending=False))
     return df
 def splt_X_Y(df):
     X = [df['alcohol'],
     df['pH'],
     df['sulphates'],
-    df['free_sulfur_dioxide']]
+    df['free_sulfur_dioxide'],df['fixed_acidity'],df['volatile_acidity'] , df['citric_acid'],df['total_sulfur_dioxide'],df['residual_sugar'],df['chlorides'],df['density']]
 
     Y = [df['quality']]
     return X,Y
-    
+def rshape(arr):
+    a=arr.shape[1]
+    b=arr.shape[0]
+    if a>b:
+        arr=arr.reshape(a,b)
+    return arr
+
 #%%
 index_title=["fixed_acidity","volatile_acidity","citric_acid","residual_sugar","chlorides","free_sulfur_dioxide","total_sulfur_dioxide","density","pH","sulphates","alcohol","quality"]
 df = pd.read_csv(sep=';',filepath_or_buffer="winequality-white.csv",header=1,names=index_title)
@@ -79,9 +83,9 @@ df = str_transform(df)
 X,Y =  splt_X_Y(df)
 X = np.array(X)
 Y = np.array(Y)
-X=X.reshape(4897,4)
-Y=Y.reshape(4897,1)
-
+X=rshape(X)
+Y=rshape(Y)
+print(X.shape)
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 scaler.fit(X)
@@ -113,8 +117,8 @@ early_stopping = EarlyStopping(monitor='val_loss', mode = "min",patience=50,rest
 model.fit(X_train,y_train,batch_size=32,validation_data=(X_test,y_test),epochs=3000,verbose=2,callbacks=[tensorboard_callback,checkpoint,early_stopping])
 pred = model.predict(X_test)
 s=model.predict_on_batch(X_test)
-print("RMSE",np.mean(np.abs((y_test - pred) / y_test)) * 100)
-print("MAPE",np.sqrt(metrics.mean_squared_error(y_test, pred)))
+print("MAPE",np.mean(np.abs((y_test - pred) / y_test)) * 100)
+print("RMSE",np.sqrt(metrics.mean_squared_error(y_test, pred)))
 '''
 from sklearn.neural_network import MLPClassifier
 import matplotlib.pyplot as plt
@@ -123,8 +127,8 @@ clf = MLPClassifier(hidden_layer_sizes=16,activation="relu",early_stopping=True,
 pa=clf.predict_proba(X_test[:1])
 p=clf.predict(X_test)
 s=clf.score(X_test, y_test)
-print("RNSE",np.mean(np.abs((y_test - p) / y_test)) * 100)
-print("MAPE",np.sqrt(metrics.mean_squared_error(y_test, p)))
+print("MAPE",np.mean(np.abs((y_test - p) / y_test)) * 100)
+print("RMSE",np.sqrt(metrics.mean_squared_error(y_test, p)))
 
 
 

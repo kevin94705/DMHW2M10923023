@@ -32,13 +32,13 @@ def train_and_predict_model(X_train, X_test, y_train, y_test, model):
     print('RMSE：' + str(np.sqrt(metrics.mean_squared_error(y_test, y_pred))))
     print('MAPE：' + str(MAPE(y_pred, y_test)))
 
-model = RandomForestRegressor(max_depth = 9, n_estimators = 40, random_state=0)
+model = RandomForestRegressor(max_depth = 23, n_estimators = 40, random_state=0)
 
 train_and_predict_model(X_train, X_test, y_train, y_test, model)
 
 #XGBoost
 XGModel = xg.XGBRegressor(objective ='reg:squarederror',learning_rate = 0.01, 
-                          n_estimators = 500, max_depth = 7, min_child_weight = 4, 
+                          n_estimators = 500, max_depth = 22, min_child_weight = 4, 
                           gamma = 0.5, subsample = 0.8, colsample_bytree = 0.7, 
                           reg_alpha = 3, reg_lambda = 3) 
 XGModel.fit(X_train,y_train)

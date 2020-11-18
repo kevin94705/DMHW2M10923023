@@ -45,8 +45,6 @@ df2 = df2.drop(['native_country','alary'],axis=1)
 data1 = pd.get_dummies(df)
 data2 = pd.get_dummies(df2)
 
-print(data1.head(1))
-
 arr = np.array(data1,dtype = float)
 np.random.shuffle(arr)
 arr2 = np.array(data2,dtype = float)
@@ -76,7 +74,7 @@ train_and_predict_model(X_train, X_test, y_train, y_test, model)
 
 #XGBoost
 XGModel = xg.XGBRegressor(objective ='reg:squarederror',learning_rate = 0.01, 
-                          n_estimators = 500, max_depth = 7, min_child_weight = 4, 
+                          n_estimators = 500, max_depth = 6, min_child_weight = 4, 
                           gamma = 0.5, subsample = 0.8, colsample_bytree = 0.7, 
                           reg_alpha = 3, reg_lambda = 3) 
 XGModel.fit(X_train,y_train)

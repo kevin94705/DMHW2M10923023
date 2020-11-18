@@ -6,7 +6,6 @@ from sklearn.preprocessing import  OneHotEncoder
 from sklearn.neural_network import MLPClassifier
 from sklearn import preprocessing
 from sklearn.model_selection import  train_test_split
-import keras
 #%%
 def checkvalue(df,index_title):
     a=[]
@@ -122,6 +121,6 @@ clf = MLPClassifier(hidden_layer_sizes=16,activation="relu",early_stopping=True,
 pa=clf.predict_proba(X_test[:1])
 p=clf.predict(X_test)
 s=clf.score(X_test, y_test)
-print("RNSE",np.mean(np.abs((y_test - p) / y_test)) * 100)
-print(np.sqrt(metrics.mean_squared_error(y_test, p)))
+print("RMSE",np.mean(np.abs((y_test - p) / y_test)) * 100)
+print("MAPE",np.sqrt(metrics.mean_squared_error(y_test, p)))
 
